@@ -14,47 +14,74 @@ function App() {
   const [homeScore, setHomeScore] = useState(0)
   const [awayScore, setAwayScore] = useState(0)
   const [quarter, setQuarter] = useState(1)
-  const [minutesTens, setMinutesTens] = useState(0)
-  const [minutes, setMinutes] = useState(0)
+  const [minutesTens, setMinutesTens] = useState(1)
+  const [minutes, setMinutes] = useState(5)
   const [secondsTens, setSecondsTens] = useState(0)
   const [seconds, setSeconds] = useState(0)
-  const [isActive, setIsActive] = useState(false);
+  const [isActive, setIsActive] = useState(false)
 
   function toggle() {
-    setIsActive(!isActive);
+    setIsActive(!isActive)
   }
 
   function reset() {
-    setSeconds(0);
-    setSecondsTens(0);
-    setMinutes(0);
-    setMinutesTens(0);
-    setIsActive(false);
+    setSeconds(0)
+    setSecondsTens(0)
+    setMinutes(5)
+    setMinutesTens(1)
+    setIsActive(false)
   }
 
+  // @@@@@ Timer counts down from 15:00
   useEffect (() => {
     let interval = null
     if (isActive) {
       interval = setInterval(() => {
-        setSeconds(seconds => seconds + 1)
-        if (seconds === 9) {
-          setSeconds(0)
-          setSecondsTens(secondsTens => secondsTens + 1)
-          if (secondsTens === 5) {
-            setSecondsTens(0)
-            setMinutes(minutes => minutes + 1)
-            if (minutes === 9) {
-              setMinutes(0)
-              setMinutesTens(minutesTens => minutesTens + 1)
+        if ((seconds === 0) && ((secondsTens > 0) || (minutes > 0) || (minutesTens > 0))) {
+          setSeconds(9)
+          setSecondsTens(secondsTens => secondsTens - 1)
+          if (secondsTens === 0) {
+            setSecondsTens(5)
+            setMinutes(minutes => minutes - 1)
+            if (minutes === 0) {
+              setMinutes(9)
+              setMinutesTens(minutesTens => minutesTens - 1)
             }
           }
-        }
+        } else if ((seconds === 0) && (secondsTens === 0) && (minutes === 0) && minutesTens === 0) {
+          toggle()
+        } else setSeconds(seconds => seconds - 1)
       }, 1000)
     } else if (!isActive && seconds !== 0) {
       clearInterval(interval)
     }
     return () => clearInterval(interval)
   }, [isActive, seconds])
+
+  // @@@@@ Timer counts up
+  // useEffect (() => {
+  //   let interval = null
+  //   if (isActive) {
+  //     interval = setInterval(() => {
+  //       setSeconds(seconds => seconds + 1)
+  //       if (seconds === 9) {
+  //         setSeconds(0)
+  //         setSecondsTens(secondsTens => secondsTens + 1)
+  //         if (secondsTens === 5) {
+  //           setSecondsTens(0)
+  //           setMinutes(minutes => minutes + 1)
+  //           if (minutes === 9) {
+  //             setMinutes(0)
+  //             setMinutesTens(minutesTens => minutesTens + 1)
+  //           }
+  //         }
+  //       }
+  //     }, 1000)
+  //   } else if (!isActive && seconds !== 0) {
+  //     clearInterval(interval)
+  //   }
+  //   return () => clearInterval(interval)
+  // }, [isActive, seconds])
 
   return (
     <div className="container">
